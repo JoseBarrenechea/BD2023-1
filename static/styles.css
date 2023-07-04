@@ -1,0 +1,107 @@
+body {
+  font-family: "Arial", sans-serif;
+  margin: 20px;
+  background-color: #222;
+}
+
+h1 {
+  text-align: center;
+  color: #00aaff; /* Azul futurista */
+  text-shadow: 2px 2px #000;
+  -webkit-text-stroke: 2px #000; /* Stroke fuerte */
+  -moz-text-stroke: 2px #000;
+}
+
+.options {
+  margin-bottom: 20px;
+}
+
+.options label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background: linear-gradient(to bottom, #00aaff, #0055aa); /* Gradiente azul */
+  color: #fff; /* Blanco */
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.buttons button:hover {
+  background: linear-gradient(to bottom, #0055aa, #00aaff); /* Gradiente inverso */
+  color: #fff; /* Blanco */
+}
+
+.container {
+  border: 1px solid #444;
+  padding: 10px;
+}
+
+#loadingMessage {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #00aaff; /* Azul futurista */
+  text-shadow: 1px 1px #000;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+caption {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #00aaff; /* Azul futurista */
+  text-shadow: 1px 1px #000;
+}
+
+th,
+td {
+  border: 1px solid #666;
+  padding: 8px;
+  text-align: left;
+  color: #fff; /* Blanco */
+}
+
+th {
+  background: linear-gradient(to bottom, #00aaff, #0055aa); /* Gradiente azul */
+  color: #fff; /* Blanco */
+}
+
+tr:nth-child(even) {
+  background-color: #111; /* Negro */
+}
+
+tr:hover {
+  background-color: #333; /* Gris oscuro */
+}
+
+.direccion {
+  background: linear-gradient(to bottom, #0055aa, #00aaff); /* Gradiente azul */
+  font-weight: bold;
+  color: #fff; /* Blanco */
+  text-shadow: 1px 1px #000;
+}
+
+label {
+  color: #fff; /* Blanco */
+  font-weight: bold;
+}
+
+
