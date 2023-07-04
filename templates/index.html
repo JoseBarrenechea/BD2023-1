@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Proyecto</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+  <h1>Base de datos Proyecto</h1>
+  <div class="buttons">
+    <label><input type="radio" name="options" value="1k" onclick="consultarTamano(this.value)">1k</label><br>
+    <label><input type="radio" name="options" value="10k" onclick="consultarTamano(this.value)">10k</label><br>
+    <label><input type="radio" name="options" value="100k" checked onclick="consultarTamano(this.value)">100k</label><br>
+    <label><input type="radio" name="options" value="1m"  onclick="consultarTamano(this.value)">1m</label>
+  </div>
+  <div class="buttons">
+    <button onclick="consulta1()">Consulta 1</button>
+    <button onclick="consulta2()">Consulta 2</button>
+    <button onclick="consulta3()">Consulta 3</button>
+  </div>
+  <div class="container">
+    <div id="loadingMessage">Cargando...</div>
+    <div id="consulta1Results"></div>
+    <div id="consulta2Results"></div>
+    <div id="consulta3Results"></div>
+  </div>
+  <script>
+    async function consultarAPI(url) {
+      try {
+        const response = await fetch(url);
+        return await response.json();
+      } catch (error) {
+        console.error(error);
+        return { success: false, message: 'Error al obtener los datos.' };
+      }
+    }
+
+    async function consultarTamano(size) {
+      const url = `/size/${size}`;
+      document.getElementById('loadingMessage').style.display = 'block';
+      const data = await consultarAPI(url);
+      document.getElementById('loadingMessage').style.display = 'none';
+    
+    }
+
+    async function consulta1() {
+      document.getElementById('loadingMessage').style.display = 'block';
+      const data = await consultarAPI('/consulta1');
+      document.getElementById('loadingMessage').style.display = 'none';
+      mostrarResultadosConsulta1(data);
+    }
+
+    async function consulta2() {
+      document.getElementById('loadingMessage').style.display = 'block';
+      const data = await consultarAPI('/consulta2');
+      document.getElementById('loadingMessage').style.display = 'none';
+      mostrarResultadosConsulta2(data);
+    }
+
+    async function consulta3() {
+      document.getElementById('loadingMessage').style.display = 'block';
+      const data = await consultarAPI('/consulta3');
+      document.getElementById('loadingMessage').style.display = 'none';
+      mostrarResultadosConsulta3(data);
+    }
+
+    function LimpiarConsultas() {
+      const consulta1Results = document.getElementById('consulta1Results');
+      consulta1Results.innerHTML = ''; 
+      const consulta2Results = document.getElementById('consulta2Results');
+      consulta2Results.innerHTML = ''; 
+      const consulta3Results = document.getElementById('consulta3Results');
+      consulta3Results.innerHTML = ''; 
+    }
+
+    function mostrarResultadosConsulta1(data) {
+      LimpiarConsultas();
+      const consulta1Results = document.getElementById('consulta1Results');
+      consulta1Results.innerHTML = ''; 
+      if (data.success) {
+        const topMasVendidos = data.top_mas_vendidos;
+        const topMenosVendidos = data.top_menos_vendidos;
+        const topMasVendidosTables = generarTablasPorDireccion(topMasVendidos, 'Top 10 más vendidos');
+        const topMenosVendidosTables = generarTablasPorDireccion(topMenosVendidos, 'Top 10 menos vendidos');
+
+        consulta1Results.innerHTML = `${topMasVendidosTables}${topMenosVendidosTables}`;
+      } else {
+        alert('Error al obtener los datos. Por favor, inténtelo de nuevo.');
+      }
+    }
+
+    function generarTablasPorDireccion(data, title) {
+      let tablesHTML = '';
+      const gananciasPorDireccion = agruparPorDireccion(data);
+
+      for (const direccion in gananciasPorDireccion) {
+        const tableHTML = generarTabla(gananciasPorDireccion[direccion], title + ` - Dirección: ${direccion}`);
+        tablesHTML += tableHTML;
+      }
+
+      return tablesHTML;
+    }
+
+    function agruparPorDireccion(data) {
+      const dataPorDireccion = {};
+      data.forEach(item => {
+        const direccion = item.direccion;
+        if (!dataPorDireccion[direccion]) {
+          dataPorDireccion[direccion] = [];
+        }
+        dataPorDireccion[direccion].push(item);
+      });
+      return dataPorDireccion;
+    }
+
+    function generarTabla(data, title) {
+      let tableHTML = `<table>
+                        <caption>${title}</caption>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad Vendida</th>
+                        </tr>`;
+
+      data.forEach(item => {
+        tableHTML += `<tr>
+                        <td>${item.producto_nombre}</td>
+                        <td>${item.cantidad_vendida}</td>
+                      </tr>`;
+      });
+
+      tableHTML += '</table>';
+      return tableHTML;
+    }
+    function mostrarResultadosConsulta2(data) {
+      LimpiarConsultas();
+      const consulta2Results = document.getElementById('consulta2Results');
+      consulta2Results.innerHTML = ''; 
+      if (data.success) {
+        const ventasPorMes = data.ventas_por_mes;
+        const ventasPorTipoDerivacion = agruparVentasPorTipoDerivacion(ventasPorMes);
+        const tablesHTML = generarTablasVentasPorTipoDerivacion(ventasPorTipoDerivacion);
+        consulta2Results.innerHTML = tablesHTML;
+      } else {
+        alert('Error al obtener los datos. Por favor, inténtelo de nuevo.');
+      }
+    }
+
+    function agruparVentasPorTipoDerivacion(data) {
+      const ventasPorTipoDerivacion = {};
+      data.forEach(item => {
+        const tipoDerivacion = item.tipo_derivacion;
+        if (!ventasPorTipoDerivacion[tipoDerivacion]) {
+          ventasPorTipoDerivacion[tipoDerivacion] = [];
+        }
+        ventasPorTipoDerivacion[tipoDerivacion].push(item);
+      });
+      return ventasPorTipoDerivacion;
+    }
+
+    function generarTablasVentasPorTipoDerivacion(data) {
+      let tablesHTML = '';
+      for (const tipoDerivacion in data) {
+        const ventasPorTipoDerivacion = data[tipoDerivacion];
+        const tableHTML = generarTablaConsulta2(ventasPorTipoDerivacion, `Ventas por Mes - Tipo de derivación: ${tipoDerivacion}`);
+        tablesHTML += tableHTML;
+      }
+      return tablesHTML;
+    }
+
+    function mostrarResultadosConsulta3(data) {
+      LimpiarConsultas();
+      const consulta3Results = document.getElementById('consulta3Results');
+      consulta3Results.innerHTML = '';
+      if (data.success) {
+        const gananciasPorDireccion = agruparGananciasPorDireccion(data.consulta3_resultado);
+        for (const direccion in gananciasPorDireccion) {
+          const gananciasTable = generarTablaGanancias(gananciasPorDireccion[direccion], `Ganancias - Dirección: ${direccion}`);
+          consulta3Results.innerHTML += gananciasTable;
+        }
+      } else {
+        alert('Error al obtener los datos. Por favor, inténtelo de nuevo.');
+      }
+    }
+
+    function agruparGananciasPorDireccion(data) {
+      const gananciasPorDireccion = {};
+      data.forEach(item => {
+        const direccion = item.direccion_local;
+        if (!gananciasPorDireccion[direccion]) {
+          gananciasPorDireccion[direccion] = [];
+        }
+        gananciasPorDireccion[direccion].push(item);
+      });
+      return gananciasPorDireccion;
+    }
+
+    function generarTablaGanancias(data, title) {
+      let tableHTML = `<table>
+                        <caption>${title}</caption>
+                        <tr>
+                            <th>Año</th>
+                            <th>Mes</th>
+                            <th>Ganancia Caja</th>
+                            <th>Sueldo Total Empleados</th>
+                            <th>Ganancia Total</th>
+                        </tr>`;
+
+      data.forEach(item => {
+        tableHTML += `<tr>
+                        <td>${item.año}</td>
+                        <td>${item.mes}</td>
+                        <td>${item.ganancia_caja}</td>
+                        <td>${item.sueldo_total_empleados}</td>
+                        <td>${item.ganancia_total}</td>
+                      </tr>`;
+      });
+
+      tableHTML += '</table>';
+      return tableHTML;
+    }
+
+    function generarTablaConsulta2(data, title) {
+      let tableHTML = `<table>
+                            <caption>${title}</caption>
+                            <tr>
+                                <th>Año</th>
+                                <th>Mes</th>
+                                <th>Cantidad de Ventas</th>
+                            </tr>`;
+
+      data.forEach(item => {
+        tableHTML += `<tr>
+                            <td>${item.año}</td>
+                            <td>${item.mes}</td>
+                            <td>${item.cantidad_ventas}</td>
+                          </tr>`;
+      });
+
+      tableHTML += '</table>';
+      return tableHTML;
+    }
+
+
+
+  </script>
+</body>
+
+</html>
